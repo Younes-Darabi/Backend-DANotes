@@ -1,14 +1,40 @@
-from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import mixins
+
 from .models import Notes
 from .serializers import NotesSerializer
 
-class NotesView(GenericAPIView):
+class NotesView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+    ):
+
     queryset = Notes.objects.all()
     serializer_class = NotesSerializer
 
-    # def get(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance)
-    #     return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
+
+class NoteDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+    ):
+
+    queryset = Notes.objects.all()
+    serializer_class = NotesSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
